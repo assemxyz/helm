@@ -1,0 +1,25 @@
+Helm chart {{ .Chart.Name }} succesfully deployed.
+
+Deployed release name  {{ .Release.Name }}
+
+Deployed job name  {{ .Values.appName }}
+
+{{ if .Values.cron.enabled}}
+to check the cron job :
+kubectl describe cronjob {{ .Values.appName }} -n {{ .Values.nameSpace }}
+
+to get the jobs executions :
+kubectl get jobs -n {{ .Values.nameSpace }}
+
+to check the log of a job execution of the cron :
+kubectl logs -l job-name=replace-by-job-name -n {{ .Values.nameSpace }}
+{{ else }}
+to check the job :
+kubectl describe job {{ .Values.appName }} -n {{ .Values.nameSpace }}
+
+to check the pod of the job :
+kubectl describe  pod -l job-name={{ .Values.appName }} -n {{ .Values.nameSpace }}
+
+to check the log of the job :
+kubectl logs -l job-name={{ .Values.appName }} -n {{ .Values.nameSpace }}
+{{ end }}

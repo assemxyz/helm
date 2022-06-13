@@ -1,0 +1,32 @@
+#app informations
+appName: soda-job-sample #must be unique
+projectId: p2999
+projectName: soda
+#k8s cluster informations
+env: dev
+nameSpace: ns12345
+serviceAccount: sa12345
+#container informations
+container:
+  name: soda-job-sample
+  version: alpine:latest
+  pullPolicy: Always
+#resources informations
+resources:
+  requestMemory: "1G"
+  requestCpu: 1
+  limitMemory: "1G"
+  limitCpu: 1
+cron:
+ #if disabled the chart become a unique job instance execution no cron
+ enabled: true 
+ #cron example "0 8 * * *" everyday at 8am (kubernete cluster time)
+ schedule: "* * * * *"
+ #histroy jobs to keep 
+ successfulJobsHistoryLimit: 10
+ failedJobsHistoryLimit: 10
+ #max wait after trigger cron delayed 
+ startingDeadlineSeconds: 300
+ #only one instance at a time is allowed
+ concurrencyPolicy: Forbid
+ 

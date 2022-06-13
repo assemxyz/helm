@@ -1,0 +1,40 @@
+{{- if eq .Values.cron.enabled true }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  labels:
+    name: {{ .Values.appName }}
+    env: {{ .Values.env }}
+    project-id: {{ .Values.projectId }}
+    project-name: {{ .Values.projectName }}
+  name: {{ .Values.appName }}
+  namespace: {{ .Values.nameSpace }}
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: {{ .Values.cron.concurrencyPolicy }}
+  failedJobsHistoryLimit: {{ .Values.cron.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ .Values.cron.successfulJobsHistoryLimit }}
+  startingDeadlineSeconds: {{ .Values.cron.startingDeadlineSeconds }}
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: {{ .Values.serviceAccount }}
+          securityContext:
+            runAsUser: 1000
+          containers:
+          - name: {{ .Values.container.name }}
+            image: {{ .Values.container.version }}
+            imagePullPolicy: {{ .Values.container.pullPolicy }}
+            command: ["/bin/sh", "-c"]
+            args: ["echo done1 && sleep 5 && echo done2 && date"]
+            resources:
+              requests:
+                memory: {{ .Values.resources.requestMemory }}
+                cpu: {{ .Values.resources.requestCpu }}
+              limits:
+                memory: {{ .Values.resources.limitMemory }}
+                cpu: {{ .Values.resources.limitCpu }} 
+          restartPolicy: Never
+{{- end }}          
